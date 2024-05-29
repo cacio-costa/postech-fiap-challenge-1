@@ -82,6 +82,7 @@ def cria_cabecalho():
 cria_cabecalho()
 st.divider()
 
+#### INÍCIO DOS INDICADORES ####
 st.write("## _Datasets_, indicadores e análises exploratórias")
 
 st.write("### Dados originais de vinhos e espumantes (unificado)")
@@ -112,6 +113,9 @@ dados = df_tem_exportacao.copy()
 if 'paises' in st.session_state and bool(st.session_state.paises):
     dados = dados.query('País in @st.session_state.paises')
 
+if 'anos' in st.session_state and bool(st.session_state.anos):
+    dados = dados.query('ano in @st.session_state.anos')
+
 st.write("### Exploração de dados de importação (somente registros de importação)")
 st.write('<br>', unsafe_allow_html=True)
 
@@ -130,7 +134,10 @@ col_peso1.metric('Total', f"$ {millify(dados['valor_usd'].sum(), precision=2)}")
 col_peso2.metric('Média', f"$ {millify(dados['valor_usd'].mean(), precision=2)}")
 col_peso3.metric('Mediana', f"$ {millify(dados['valor_usd'].median(), precision=2)}")
 
-paises = st.multiselect("Filtrar por país:", list(df_tem_exportacao['País'].unique()), key='paises', placeholder='Escolha um ou mais países')
+col1, col2 = st.columns(2)
+col1.multiselect("Filtrar por país:", list(df_tem_exportacao['País'].unique()), key='paises', placeholder='Escolha um ou mais países')
+col2.multiselect("Filtrar por ano:", sorted(list(df_tem_exportacao['ano'].unique()), reverse=True), key='anos', placeholder='Escolha um ou mais anos')
+
 
 mapeamento_colunas = {
     'ano': 'Ano',
