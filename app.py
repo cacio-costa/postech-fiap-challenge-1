@@ -184,8 +184,8 @@ st.write("### Tragédia no Rio Grande do Sul")
 st.write('A tragédia ocorrida em 2024 no Rio Grande do Sul (recente à data de escrita deste relatório, maio de 2024) pode comprometer bastante a exportação de vinhos e espumantes. O Rio Grande do Sul desempenha um papel crucial na indústria vitivinícola do Brasil, sendo responsável por cerca de 90% da produção nacional de vinhos. A região é conhecida por suas uvas Vitis vinifera e Vitis labrusca, com uma produção diversificada que inclui vinhos tintos leves, vinhos brancos ricos e espumantes no estilo spumante italiano. A região de Serra Gaúcha, em particular, é notável pela produção de espumantes, que são um dos principais produtos da área.')
 st.caption('Fonte: WINE-SEARCHER. Rio Grande do Sul - Brazil Wine Region. 2023-10-23. Disponível em: https://www.wine-searcher.com/regions-rio+grande+do+sul. Acesso em: 27 mai. 2024.')
 
-st.write("### Buscar acordos com grandes países consumidores de vinho")
-st.write('Há uma grande janela de oportunidades a explorar. Dentre os dez países mais consumidores de vinho, de acordo com a International Organisation of Vine and Wine, dois deles - Argentina e Itália -, ocupam as posições 40 e 46, respectivamente, na quantidade de volume exportado.')
+st.write("### Acordos com grandes países consumidores de vinho")
+st.write('Há uma grande janela de oportunidades a explorar. Dentre os dez países que mais consomem de vinho, de acordo com a International Organisation of Vine and Wine, dois deles - Argentina e Itália -, ocupam as posições 40 e 46, respectivamente, na quantidade de volume exportado.')
 with st.expander('Visualizar ranking de consumo segundo a International Organisation of Vine and Wine'):
     st.image('imagens/ranking-de-consumo.png', caption='International Organisation of Vine and Wine - https://www.oiv.int/sites/default/files/2024-04/OIV_STATE_OF_THE_WORLD_VINE_AND_WINE_SECTOR_IN_2023.pdf', use_column_width='auto')
 
@@ -199,11 +199,14 @@ df_pais_peso['Volume importado'] = df_pais_peso['Volume importado'].apply(lambda
 st.table(df_pais_peso.query('País in ["Italia", "Argentina"]').set_index('País'))
 
 
-# - Preço no mercosul é um limitador (NÃO ACHEI FONTES TAXATIVAS SOBRE TRAVA DE PREÇO)
-# - Ações de marketing/cooperação com países que importam mas pouco volume
-#     - França, Itália, Argentina, China e Portugal
-#     - Incluir a exportação de vinhos/espumantes na "Marca Brasil" do Ministério do turismo
-#     - APEX Brasil 
+st.write('### Intensificar "Marca Brasil" e _Setorial Wines Of Brazil_')
+st.write('O mercado de exportação de vinhos já faz parte da "Marca Brasil" (é uma _Nation Brand_, do Ministério do Turismo, que representa o país no comércio de produtos, serviços e turismo), e também faz parte do projeto _Projeto Setorial Wines Of Brazil_, da APEX Brasil.')
+st.write('A APEX Brasil atende hoje 24 vinícolas brasileiras, das quais 16 já atuam no mercado internacional. Portanto, *nossa organização poderia negociar com a APEX Brasil para se juntar ao rol de vinícolas pertecentes ao projeto*, e assim ganhar mais visibilidade e novos mercados.')
+st.caption('APEXBRASIL. Vinhos e espumantes brasileiros batem recorde de exportações e conquistam cada vez mais consumidores ao redor do mundo com apoio da ApexBrasil. 2024-05-14. Disponível em: https://apexbrasil.com.br/br/pt/conteudo/noticias/vinhos-espumantes-batem-recorde-exportacoes.html. Acesso em: 27 maio 2024.')
+
+
+st.write('')
+
 # - Destacar China como grande potencial de crescimento
 
 
