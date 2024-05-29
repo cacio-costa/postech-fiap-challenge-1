@@ -191,7 +191,7 @@ st.write('A tragédia ocorrida em 2024 no Rio Grande do Sul (recente à data de 
 st.caption('Fonte: WINE-SEARCHER. Rio Grande do Sul - Brazil Wine Region. 2023-10-23. Disponível em: https://www.wine-searcher.com/regions-rio+grande+do+sul. Acesso em: 27 mai. 2024.')
 
 st.write("### Acordos com grandes países consumidores de vinho")
-st.write('Há uma grande janela de oportunidades a explorar. Dentre os dez países que mais consomem vinho, de acordo com a International Organisation of Vine and Wine, dois deles - Argentina e Itália -, ocupam as posições 40 e 46, respectivamente, na quantidade de volume exportado.')
+st.write('Há uma grande janela de oportunidades a explorar. Dentre os dez países que mais consomem vinho, de acordo com a International Organisation of Vine and Wine, dois deles - Argentina e Itália -, ocupam as posições 40 e 46, respectivamente, na quantidade de volume importado do Brasil.')
 with st.expander('Visualizar ranking de consumo segundo a International Organisation of Vine and Wine'):
     st.image('imagens/ranking-de-consumo.png', caption='International Organisation of Vine and Wine - https://www.oiv.int/sites/default/files/2024-04/OIV_STATE_OF_THE_WORLD_VINE_AND_WINE_SECTOR_IN_2023.pdf', use_column_width='auto')
 
@@ -199,8 +199,8 @@ df_pais_peso = df_tem_exportacao.groupby('País')['peso_l'].sum().reset_index()
 df_pais_peso = df_pais_peso.sort_values('peso_l', ascending=False).reset_index(drop=True)
 df_pais_peso['Posição'] = df_pais_peso.index + 1
 
-df_pais_peso.rename(columns={'peso_l': 'Volume importado'}, inplace=True)
-df_pais_peso['Volume importado'] = df_pais_peso['Volume importado'].apply(lambda x: f'{millify(x, precision=2)} litros')
+df_pais_peso.rename(columns={'peso_l': 'Volume importado do Brasil'}, inplace=True)
+df_pais_peso['Volume importado do Brasil'] = df_pais_peso['Volume importado do Brasil'].apply(lambda x: f'{millify(x, precision=2)} litros')
 
 st.table(df_pais_peso.query('País in ["Italia", "Argentina"]').set_index('País'))
 
@@ -232,11 +232,15 @@ percentual_paises_ausentes = (qtd_paises_sem_medidas / qtd_paises) * 100
 
 col_paises1, col_paises2, col_paises3 = st.columns(3)
 col_paises1.metric('Quantidade de países', qtd_paises)
-col_paises2.metric('Países sem importação', qtd_paises_sem_medidas)
-col_paises3.metric('Percentual sem importação', f'{millify(percentual_paises_ausentes, precision=2)}%')
+col_paises2.metric('Países sem exportação', qtd_paises_sem_medidas)
+col_paises3.metric('Percentual sem exportação', f'{millify(percentual_paises_ausentes, precision=2)}%')
 
 st.caption('Dataframe original')
-st.dataframe(df_exp, hide_index=True)
+st.dataframe(df_exp, 
+             hide_index=True,
+             column_config={
+                 'ano': st.column_config.NumberColumn(format='%d')
+             })
 st.divider()
 
 dados = df_tem_exportacao.copy()
@@ -246,7 +250,7 @@ if 'paises' in st.session_state and bool(st.session_state.paises):
 if 'anos' in st.session_state and bool(st.session_state.anos):
     dados = dados.query('ano in @st.session_state.anos')
 
-st.write("### Exploração de dados de importação (somente registros de importação)")
+st.write("### Dados de exportação")
 st.write('<br>', unsafe_allow_html=True)
 
 st.write('##### Volume exportado (em litros)')
@@ -288,3 +292,8 @@ st.dataframe(
         'Ano': st.column_config.NumberColumn(format='%d')
     }
 )
+
+st.write('##### Links dos recursos utilizados')
+st.page_link('https://colab.research.google.com/drive/1DQDdyaXPzILKfRqEOpQvKKfDigITxju5?usp=sharing', label='Notebook com as análises')
+st.page_link('https://github.com/cacio-costa/postech-fiap-challenge-1', label='Repositório da aplicação Streamlit')
+
