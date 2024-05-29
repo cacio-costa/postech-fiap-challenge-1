@@ -4,25 +4,18 @@ import matplotlib.pyplot as plt
 import dados
 
 
+azul = 'steelblue'
+laranja = 'sandybrown'
+
 def cria_grafico_producao_versus_exportacao(df_vinho, df_total):
     fig, ax1 = plt.subplots()
 
-    prod_color = 'green'
-    ax1.plot(df_vinho.index,df_vinho['prod_total_Ml'],color=prod_color)
-    ax1.set_ylabel("Produção (milhões litros)", color=prod_color)
-    ax1.tick_params(axis='y', labelcolor=prod_color)
-    ax1.set_ylim(ymin=50, ymax=500)
-
-    ax2 = ax1.twinx()
-
-    exp_color = 'red'
-    ax2.plot(df_total.index,df_total['peso_Ml'],color=exp_color)
-    ax2.set_ylabel("Exportação (milhões litros)", color=exp_color)
-    ax2.tick_params(axis='y', labelcolor=exp_color)
-    ax2.set_ylim(ymin=0, ymax=50)
-
+    ax1.plot(df_vinho.index,df_vinho['prod_total_Ml'], color=azul)
+    ax1.plot(df_total.index,df_total['peso_Ml'], color=laranja)
+    ax1.set_ylabel("Produção (milhões litros)")
     ax1.set_title("Produção x Exportação de Vinhos e Espumantes no Brasil")
     ax1.grid(ls="--")
+    ax1.legend(["Produção total","Exportação Total"], loc='lower right', fontsize='small', bbox_to_anchor=(1, 0.3))
     
     return fig
 
@@ -31,7 +24,7 @@ def cria_grafico_de_representatividade_de_exportacao_no_brasil(df_representativi
     media_pct_Ml = df_representatividade.mean()
 
     fig, ax = plt.subplots()
-    ax.plot(df_representatividade, color = 'black')
+    ax.plot(df_representatividade, color=azul)
     ax.set_title('Representatividade de exportação no Brasil')
     ax.set_ylabel("%Representatividade")
     ax.grid(ls="--")
@@ -48,7 +41,7 @@ def cria_grafico_de_quantidade_de_paises_exportados(df_exportacao):
 
     fig, ax = plt.subplots()
 
-    ax.plot(df_pais_com_medidas_por_ano.index,df_pais_com_medidas_por_ano['País'],alpha=0.5)
+    ax.plot(df_pais_com_medidas_por_ano.index,df_pais_com_medidas_por_ano['País'],color=azul)
     ax.set_title("Aumento de países para os quais o Brasil exportou")
     ax.set_ylabel("% Variação")
     ax.grid(ls="--")
@@ -60,10 +53,11 @@ def cria_grafico_top_10_paises_consumidores(df):
     df = df.reset_index().sort_values(by='peso_Ml', ascending=True)
 
     fig, ax = plt.subplots()
-    ax.barh(df['País'], df['peso_Ml'])
     ax.set_title('Top 10 países por litro de vinho e espumantes exportados')
     ax.set_xlabel('Total de litros (em Milhões)')
 
+    ax.barh(df['País'], df['peso_Ml'], color=azul)
+        
     return fig
 
 
@@ -89,8 +83,8 @@ def cria_grafico_da_tendencia_de_crescimento_de_valor(df_exp_total):
     xticks = df_exp_total.index.to_list() + list(anos_previsao)
 
     fig, ax = plt.subplots()
-    ax.plot(anos, df_exp_total['usd_por_l'], color='blue')
-    ax.plot(anos_previsao, anos_previsao_usd_por_l, 'o', color='blue', label='Previsão USD/L')
+    ax.plot(anos, df_exp_total['usd_por_l'], color=azul)
+    ax.plot(anos_previsao, anos_previsao_usd_por_l, 'o', color=laranja, label='Previsão USD/L')
     ax.axhline(media_usd_por_l, linestyle='--', color='g', linewidth=1)
     ax.axvline(2023, linestyle='--', color='black', linewidth=1, alpha=0.5)
     ax.set_xlabel('Ano')
@@ -109,7 +103,7 @@ def cria_grafico_da_tendencia_de_crescimento_de_valor(df_exp_total):
 def cria_grafico_de_variacao_percentual_de_exportacao(df):
     fig, ax = plt.subplots()
 
-    ax.bar(df.index, df['pct_var_peso'], color = 'red',alpha=0.5)
+    ax.bar(df.index, df['pct_var_peso'], color = azul,alpha=0.5)
     ax.set_title("Variação Percentual de Exportação de Vinhos e Espumantes no Brasil")
     ax.set_ylabel("% Variação")
     ax.grid(ls="--")
@@ -118,7 +112,6 @@ def cria_grafico_de_variacao_percentual_de_exportacao(df):
 
 
 def cria_grafico_de_valores_anuais_de_exportacao(df):
-    color = 'tab:red'
     anos = df.index
 
     anos_previsao = np.arange(2024, 2026+1)
@@ -131,7 +124,7 @@ def cria_grafico_de_valores_anuais_de_exportacao(df):
     fig, ax = plt.subplots()
     ax.set_xlabel('ano')
     ax.set_ylabel('Peso (Milhões Litros)')
-    ax.plot(anos, y, color=color)
+    ax.plot(anos, y, color=azul)
     ax.tick_params(axis='y')
     ax.set_xticks(xticks[::2])
     ax.axhline(media_peso_Ml, linestyle='--', color='k', linewidth=1, alpha=0.5)
@@ -169,25 +162,24 @@ def cria_grafico_de_previsao_com_paraguai(df_exportacao, df_total_por_ano):
 
     xticks = anos.to_list() + list(anos_previsao)
 
-    color = 'tab:blue'
     (a, b) = min_square(anos, df_exp_vinho_pais['valor_usd_M'], anos.size)
     anos_previsao_valor_usd = a * anos_previsao + b
     ax.set_xlabel('ano')
-    ax.set_ylabel('Valor USD (em milhões)', color=color)
-    ax.plot(anos, df_exp_vinho_pais['valor_usd_M'], color=color, alpha=0.7)
-    ax.plot(anos_previsao, anos_previsao_valor_usd, 'o', color=color, alpha=0.7)
-    ax.tick_params(axis='y', labelcolor=color)
+    ax.set_ylabel('Valor USD (em milhões)', color=azul, alpha=1)
+    ax.plot(anos, df_exp_vinho_pais['valor_usd_M'], color=azul)
+    ax.plot(anos_previsao, anos_previsao_valor_usd, 'o', color=azul)
+    ax.tick_params(axis='y', labelcolor=azul)
+    ax.grid(linestyle='--', alpha=0.5)
 
     ax2 = ax.twinx()
 
-    color = 'tab:red'
     (a, b) = min_square(anos, df_exp_vinho_pais['peso_Ml'], anos.size)
     anos_previsao_peso_kg = a * anos_previsao + b
     ax2.set_xlabel('ano')
-    ax2.set_ylabel('Peso Litros (em milhões)', color=color)
-    ax2.plot(anos, df_exp_vinho_pais['peso_Ml'], color=color, alpha=0.7)
-    ax2.plot(anos_previsao, anos_previsao_peso_kg, 's', color=color, alpha=0.7)
-    ax2.tick_params(axis='y', labelcolor=color)
+    ax2.set_ylabel('Peso Litros (em milhões)', color=laranja, alpha=1)
+    ax2.plot(anos, df_exp_vinho_pais['peso_Ml'], color=laranja)
+    ax2.plot(anos_previsao, anos_previsao_peso_kg, 's', color=laranja)
+    ax2.tick_params(axis='y', labelcolor=laranja)
 
     ax.set_title(f"Exportação de Vinhos e Espumantes para Paraguai")
     ax.grid(True)
@@ -207,25 +199,24 @@ def cria_grafico_de_previsao_com_haiti(df_exportacao, df_total_ano):
 
     xticks = anos.to_list() + list(anos_previsao)
 
-    color = 'tab:blue'
     (a, b) = min_square(anos, df_exp_vinho_pais['valor_usd_M'], anos.size)
     anos_previsao_valor_usd = a * anos_previsao + b
     ax.set_xlabel('ano')
-    ax.set_ylabel('Valor USD (em milhões)', color=color)
-    ax.plot(anos, df_exp_vinho_pais['valor_usd_M'], color=color, alpha=0.7)
-    ax.plot(anos_previsao, anos_previsao_valor_usd, 'o', color=color, alpha=0.7)
-    ax.tick_params(axis='y', labelcolor=color)
+    ax.set_ylabel('Valor USD (em milhões)', color=azul, alpha=1)
+    ax.plot(anos, df_exp_vinho_pais['valor_usd_M'], color=azul)
+    ax.plot(anos_previsao, anos_previsao_valor_usd, 'o', color=azul)
+    ax.tick_params(axis='y', labelcolor=azul)
+    ax.grid(linestyle='--', alpha=0.5)
 
     ax2 = ax.twinx()
 
-    color = 'tab:red'
     (a, b) = min_square(anos, df_exp_vinho_pais['peso_Ml'], anos.size)
     anos_previsao_peso_kg = a * anos_previsao + b
     ax2.set_xlabel('ano')
-    ax2.set_ylabel('Peso Litros (em milhões)', color=color)
-    ax2.plot(anos, df_exp_vinho_pais['peso_Ml'], color=color, alpha=0.7)
-    ax2.plot(anos_previsao, anos_previsao_peso_kg, 's', color=color, alpha=0.7)
-    ax2.tick_params(axis='y', labelcolor=color)
+    ax2.set_ylabel('Peso Litros (em milhões)', color=laranja, alpha=1)
+    ax2.plot(anos, df_exp_vinho_pais['peso_Ml'], color=laranja)
+    ax2.plot(anos_previsao, anos_previsao_peso_kg, 's', color=laranja)
+    ax2.tick_params(axis='y', labelcolor=laranja)
 
     ax.set_title(f"Previsão de exportação de Vinhos e Espumantes para Haiti")
     ax.grid(True)
@@ -245,25 +236,24 @@ def cria_grafico_de_previsao_com_eua(df_exportacao, df_total_ano):
 
     xticks = anos.to_list() + list(anos_previsao)
 
-    color = 'tab:blue'
     (a, b) = min_square(anos, df_exp_vinho_pais['valor_usd_M'], anos.size)
     anos_previsao_valor_usd = a * anos_previsao + b
     ax.set_xlabel('ano')
-    ax.set_ylabel('Valor USD (em milhões)', color=color)
-    ax.plot(anos, df_exp_vinho_pais['valor_usd_M'], color=color, alpha=0.7)
-    ax.plot(anos_previsao, anos_previsao_valor_usd, 'o', color=color, alpha=0.7)
-    ax.tick_params(axis='y', labelcolor=color)
+    ax.set_ylabel('Valor USD (em milhões)', color=azul)
+    ax.plot(anos, df_exp_vinho_pais['valor_usd_M'], color=azul)
+    ax.plot(anos_previsao, anos_previsao_valor_usd, 'o', color=azul)
+    ax.tick_params(axis='y', labelcolor=azul)
+    ax.grid(linestyle='--', alpha=0.5)
 
     ax2 = ax.twinx()
 
-    color = 'tab:red'
     (a, b) = min_square(anos, df_exp_vinho_pais['peso_Ml'], anos.size)
     anos_previsao_peso_kg = a * anos_previsao + b
     ax2.set_xlabel('ano')
-    ax2.set_ylabel('Peso Litros (em milhões)', color=color)
-    ax2.plot(anos, df_exp_vinho_pais['peso_Ml'], color=color, alpha=0.7)
-    ax2.plot(anos_previsao, anos_previsao_peso_kg, 's', color=color, alpha=0.7)
-    ax2.tick_params(axis='y', labelcolor=color)
+    ax2.set_ylabel('Peso Litros (em milhões)', color=laranja, alpha=1)
+    ax2.plot(anos, df_exp_vinho_pais['peso_Ml'], color=laranja)
+    ax2.plot(anos_previsao, anos_previsao_peso_kg, 's', color=laranja)
+    ax2.tick_params(axis='y', labelcolor=laranja)
 
     ax.set_title(f"Previsão de exportação de Vinhos e Espumantes \npara Estados Unidos")
     ax.grid(True)
