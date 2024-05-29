@@ -82,85 +82,6 @@ def cria_cabecalho():
 cria_cabecalho()
 st.divider()
 
-#### INÍCIO DOS INDICADORES ####
-st.write("## _Datasets_, indicadores e análises exploratórias")
-
-st.write("### Dados originais de vinhos e espumantes (unificado)")
-
-qtd_registros = df_exp['País'].count()
-qtd_registros_zerados = df_exp.query('valor_usd == 0 & peso_l == 0').shape[0]
-percentual_registros_ausentes = (qtd_registros_zerados / qtd_registros) * 100
-
-col_registros1, col_registros2, col_registros3 = st.columns(3)
-col_registros1.metric('Total de registros', qtd_registros)
-col_registros2.metric('Registros sem informação (zerados)', qtd_registros_zerados)
-col_registros3.metric('Percentual ausente', f'{millify(percentual_registros_ausentes, precision=2)}%')
-
-qtd_paises = len(df_exp['País'].unique())
-qtd_paises_sem_medidas = df_paises_sem_importacao.shape[0]
-percentual_paises_ausentes = (qtd_paises_sem_medidas / qtd_paises) * 100
-
-col_paises1, col_paises2, col_paises3 = st.columns(3)
-col_paises1.metric('Quantidade de países', qtd_paises)
-col_paises2.metric('Países sem importação', qtd_paises_sem_medidas)
-col_paises3.metric('Percentual sem importação', f'{millify(percentual_paises_ausentes, precision=2)}%')
-
-st.caption('Dataframe original')
-st.dataframe(df_exp, hide_index=True)
-st.divider()
-
-dados = df_tem_exportacao.copy()
-if 'paises' in st.session_state and bool(st.session_state.paises):
-    dados = dados.query('País in @st.session_state.paises')
-
-if 'anos' in st.session_state and bool(st.session_state.anos):
-    dados = dados.query('ano in @st.session_state.anos')
-
-st.write("### Exploração de dados de importação (somente registros de importação)")
-st.write('<br>', unsafe_allow_html=True)
-
-st.write('##### Volume exportado (em litros)')
-
-col_peso1, col_peso2, col_peso3 = st.columns(3)
-col_peso1.metric('Total', millify(dados['peso_l'].sum(), precision=2))
-col_peso2.metric('Média', millify(dados['peso_l'].mean(), precision=2))
-col_peso3.metric('Mediana', millify(dados['peso_l'].median(), precision=2))
-st.write('<br>', unsafe_allow_html=True)
-
-st.write('##### Valor exportado (em dólares)')
-
-col_peso1, col_peso2, col_peso3 = st.columns(3)
-col_peso1.metric('Total', f"$ {millify(dados['valor_usd'].sum(), precision=2)}")
-col_peso2.metric('Média', f"$ {millify(dados['valor_usd'].mean(), precision=2)}")
-col_peso3.metric('Mediana', f"$ {millify(dados['valor_usd'].median(), precision=2)}")
-
-col1, col2 = st.columns(2)
-col1.multiselect("Filtrar por país:", list(df_tem_exportacao['País'].unique()), key='paises', placeholder='Escolha um ou mais países')
-col2.multiselect("Filtrar por ano:", sorted(list(df_tem_exportacao['ano'].unique()), reverse=True), key='anos', placeholder='Escolha um ou mais anos')
-
-
-mapeamento_colunas = {
-    'ano': 'Ano',
-    'peso_l': 'Litros totais',
-    'valor_usd': 'Valor total',
-    'peso_l_vinho': 'Litros de vinho',
-    'valor_usd_vinho': 'Valor pago (vinho)',
-    'peso_l_espumante': 'Litros de espumante',
-    'valor_usd_espumante': 'Valor pago (espumante)',
-    'usd_por_l': 'Valor por litro'
-}
-dados.rename(columns=mapeamento_colunas, inplace=True)
-dados.drop(columns=['peso_Ml', 'valor_usd_M'], inplace=True)
-st.dataframe(
-    dados.style.format(lambda x: millify(x, 2), subset=['Litros totais', 'Valor total', 'Litros de vinho', 'Valor pago (vinho)', 'Litros de espumante', 'Valor pago (espumante)', 'Valor por litro']), 
-    hide_index=True,
-    column_config={
-        'Ano': st.column_config.NumberColumn(format='%d')
-    }
-)
-
-st.divider()
-
 #### INÍCIO DO RELATÓRIO ####
 
 st.write("# Relatório de Análise de Exportação de Vinhos e Espumantes pelo Brasil")
@@ -270,7 +191,7 @@ st.write('A tragédia ocorrida em 2024 no Rio Grande do Sul (recente à data de 
 st.caption('Fonte: WINE-SEARCHER. Rio Grande do Sul - Brazil Wine Region. 2023-10-23. Disponível em: https://www.wine-searcher.com/regions-rio+grande+do+sul. Acesso em: 27 mai. 2024.')
 
 st.write("### Acordos com grandes países consumidores de vinho")
-st.write('Há uma grande janela de oportunidades a explorar. Dentre os dez países que mais consomem de vinho, de acordo com a International Organisation of Vine and Wine, dois deles - Argentina e Itália -, ocupam as posições 40 e 46, respectivamente, na quantidade de volume exportado.')
+st.write('Há uma grande janela de oportunidades a explorar. Dentre os dez países que mais consomem vinho, de acordo com a International Organisation of Vine and Wine, dois deles - Argentina e Itália -, ocupam as posições 40 e 46, respectivamente, na quantidade de volume exportado.')
 with st.expander('Visualizar ranking de consumo segundo a International Organisation of Vine and Wine'):
     st.image('imagens/ranking-de-consumo.png', caption='International Organisation of Vine and Wine - https://www.oiv.int/sites/default/files/2024-04/OIV_STATE_OF_THE_WORLD_VINE_AND_WINE_SECTOR_IN_2023.pdf', use_column_width='auto')
 
@@ -283,8 +204,87 @@ df_pais_peso['Volume importado'] = df_pais_peso['Volume importado'].apply(lambda
 
 st.table(df_pais_peso.query('País in ["Italia", "Argentina"]').set_index('País'))
 
-
 st.write('### Intensificar "Marca Brasil" e _Setorial Wines Of Brazil_')
 st.write('O mercado de exportação de vinhos já faz parte da "Marca Brasil" (é uma _Nation Brand_, do Ministério do Turismo, que representa o país no comércio de produtos, serviços e turismo), e também faz parte do projeto _Projeto Setorial Wines Of Brazil_, da APEX Brasil.')
-st.write('A APEX Brasil atende hoje 24 vinícolas brasileiras, das quais 16 já atuam no mercado internacional. Portanto, *nossa organização poderia negociar com a APEX Brasil para se juntar ao rol de vinícolas pertecentes ao projeto*, e assim ganhar mais visibilidade e novos mercados.')
+st.write('A APEX Brasil atende hoje 24 vinícolas brasileiras, das quais 16 já atuam no mercado internacional. Portanto, **nossa organização poderia negociar com a APEX Brasil para se juntar ao rol de vinícolas pertecentes ao projeto**, e assim ganhar mais visibilidade e novos mercados.')
 st.caption('APEXBRASIL. Vinhos e espumantes brasileiros batem recorde de exportações e conquistam cada vez mais consumidores ao redor do mundo com apoio da ApexBrasil. 2024-05-14. Disponível em: https://apexbrasil.com.br/br/pt/conteudo/noticias/vinhos-espumantes-batem-recorde-exportacoes.html. Acesso em: 27 maio 2024.')
+
+st.divider()
+
+
+#### INÍCIO DOS INDICADORES ####
+st.write("## _Datasets_, indicadores e análises exploratórias")
+
+st.write("### Dados originais de vinhos e espumantes (unificado)")
+
+qtd_registros = df_exp['País'].count()
+qtd_registros_zerados = df_exp.query('valor_usd == 0 & peso_l == 0').shape[0]
+percentual_registros_ausentes = (qtd_registros_zerados / qtd_registros) * 100
+
+col_registros1, col_registros2, col_registros3 = st.columns(3)
+col_registros1.metric('Total de registros', qtd_registros)
+col_registros2.metric('Registros sem informação (zerados)', qtd_registros_zerados)
+col_registros3.metric('Percentual ausente', f'{millify(percentual_registros_ausentes, precision=2)}%')
+
+qtd_paises = len(df_exp['País'].unique())
+qtd_paises_sem_medidas = df_paises_sem_importacao.shape[0]
+percentual_paises_ausentes = (qtd_paises_sem_medidas / qtd_paises) * 100
+
+col_paises1, col_paises2, col_paises3 = st.columns(3)
+col_paises1.metric('Quantidade de países', qtd_paises)
+col_paises2.metric('Países sem importação', qtd_paises_sem_medidas)
+col_paises3.metric('Percentual sem importação', f'{millify(percentual_paises_ausentes, precision=2)}%')
+
+st.caption('Dataframe original')
+st.dataframe(df_exp, hide_index=True)
+st.divider()
+
+dados = df_tem_exportacao.copy()
+if 'paises' in st.session_state and bool(st.session_state.paises):
+    dados = dados.query('País in @st.session_state.paises')
+
+if 'anos' in st.session_state and bool(st.session_state.anos):
+    dados = dados.query('ano in @st.session_state.anos')
+
+st.write("### Exploração de dados de importação (somente registros de importação)")
+st.write('<br>', unsafe_allow_html=True)
+
+st.write('##### Volume exportado (em litros)')
+
+col_peso1, col_peso2, col_peso3 = st.columns(3)
+col_peso1.metric('Total', millify(dados['peso_l'].sum(), precision=2))
+col_peso2.metric('Média', millify(dados['peso_l'].mean(), precision=2))
+col_peso3.metric('Mediana', millify(dados['peso_l'].median(), precision=2))
+st.write('<br>', unsafe_allow_html=True)
+
+st.write('##### Valor exportado (em dólares)')
+
+col_peso1, col_peso2, col_peso3 = st.columns(3)
+col_peso1.metric('Total', f"$ {millify(dados['valor_usd'].sum(), precision=2)}")
+col_peso2.metric('Média', f"$ {millify(dados['valor_usd'].mean(), precision=2)}")
+col_peso3.metric('Mediana', f"$ {millify(dados['valor_usd'].median(), precision=2)}")
+
+col1, col2 = st.columns(2)
+col1.multiselect("Filtrar por país:", list(df_tem_exportacao['País'].unique()), key='paises', placeholder='Escolha um ou mais países')
+col2.multiselect("Filtrar por ano:", sorted(list(df_tem_exportacao['ano'].unique()), reverse=True), key='anos', placeholder='Escolha um ou mais anos')
+
+
+mapeamento_colunas = {
+    'ano': 'Ano',
+    'peso_l': 'Litros totais',
+    'valor_usd': 'Valor total',
+    'peso_l_vinho': 'Litros de vinho',
+    'valor_usd_vinho': 'Valor pago (vinho)',
+    'peso_l_espumante': 'Litros de espumante',
+    'valor_usd_espumante': 'Valor pago (espumante)',
+    'usd_por_l': 'Valor por litro'
+}
+dados.rename(columns=mapeamento_colunas, inplace=True)
+dados.drop(columns=['peso_Ml', 'valor_usd_M'], inplace=True)
+st.dataframe(
+    dados.style.format(lambda x: millify(x, 2), subset=['Litros totais', 'Valor total', 'Litros de vinho', 'Valor pago (vinho)', 'Litros de espumante', 'Valor pago (espumante)', 'Valor por litro']), 
+    hide_index=True,
+    column_config={
+        'Ano': st.column_config.NumberColumn(format='%d')
+    }
+)
