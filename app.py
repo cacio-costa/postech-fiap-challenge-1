@@ -123,12 +123,14 @@ st.pyplot(grafico)
 
 
 st.write('Embora tenhamos tido alguns grandes parceiros comerciais no decorrer destes 15 anos, podemos explorar ainda mais algumas oportunidades. Olhando para litros/exportados, nossos 5 (cinco) maiores compradores são: Rússia, Paraguai, Estados Unidos, China e Haiti.')
+grafico = graficos.cria_grafico_top_10_paises_consumidores(top_peso_kg)
+st.pyplot(grafico)
 
+st.write('Do ponto de vista de valor, os cinco maiores compradores são: Paraguai, Rússia, Estados Unidos, Reino Unido e China. O que nos mostra que, apesar de exportarmos mais volume para a China e o Haiti, o valor exportado para o Reino Unido é maior. Dois fatores podem explicar esse fenômeno: o câmbio favorável em relação à libra esterlina para exportações; ou estamos exportando produtos de maior valor agregado para o Reino Unido.')
 grafico = graficos.cria_grafico_de_importacao_dos_maiores_paises(paises_maior_valor_total, df_exp)
 st.pyplot(grafico)
 
-grafico = graficos.cria_grafico_top_10_paises_consumidores(top_peso_kg)
-st.pyplot(grafico)
+st.write('É importante destacar que, apesar dos montantes expressivos oriundos da Rússia, os dados de exportação para ela caíram drasticamente a partir de 2014.')
 st.divider()
 
 st.write("## Futuro otimista - tendência de crescimento em volume e valor")
@@ -270,7 +272,7 @@ col_peso3.metric('Mediana', f"$ {millify(dados['valor_usd'].median(), precision=
 
 col1, col2 = st.columns(2)
 col1.multiselect("Filtrar por país:", list(df_tem_exportacao['País'].unique()), key='paises', placeholder='Escolha um ou mais países')
-col2.multiselect("Filtrar por ano:", sorted(list(df_tem_exportacao['ano'].unique()), reverse=True), key='anos', placeholder='Escolha um ou mais anos')
+col2.multiselect("Filtrar por ano:", sorted(list(dados['ano'].unique()), reverse=True), key='anos', placeholder='Escolha um ou mais anos')
 
 
 mapeamento_colunas = {

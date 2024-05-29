@@ -139,7 +139,7 @@ def cria_grafico_de_valores_anuais_de_exportacao(df):
 def cria_grafico_de_importacao_dos_maiores_paises(paises_maior_valor_total, df_exp):
     fig, ax = plt.subplots()
 
-    for p in paises_maior_valor_total:
+    for p in paises_maior_valor_total[:5]:
         df_exp_vinho_pais = df_exp.query('@p in País')
         ax.plot(df_exp_vinho_pais['ano'], df_exp_vinho_pais['valor_usd_M'])
 
