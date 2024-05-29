@@ -29,6 +29,7 @@ df_paises_sem_importacao = df_exp.groupby('País').mean(numeric_only=True).query
 
 nomes_paises_sem_importacao = df_paises_sem_importacao['País'].tolist()
 df_paises_com_importacao = df_exp.query('País not in @nomes_paises_sem_importacao').reset_index()
+df_tem_exportacao = df_exp[(df_exp['valor_usd'] != 0) & (df_exp['peso_l'] != 0)]
 
 df_exp_total_por_ano = df_paises_com_importacao.groupby('ano')[['peso_Ml', 'valor_usd_M', 'usd_por_l']].sum()
 df_exp_total_por_ano['pct_var_peso'] = df_exp_total_por_ano['peso_Ml'].pct_change()*100
@@ -183,10 +184,24 @@ st.write("### Tragédia no Rio Grande do Sul")
 st.write('A tragédia ocorrida em 2024 no Rio Grande do Sul (recente à data de escrita deste relatório, maio de 2024) pode comprometer bastante a exportação de vinhos e espumantes. O Rio Grande do Sul desempenha um papel crucial na indústria vitivinícola do Brasil, sendo responsável por cerca de 90% da produção nacional de vinhos. A região é conhecida por suas uvas Vitis vinifera e Vitis labrusca, com uma produção diversificada que inclui vinhos tintos leves, vinhos brancos ricos e espumantes no estilo spumante italiano. A região de Serra Gaúcha, em particular, é notável pela produção de espumantes, que são um dos principais produtos da área.')
 st.caption('Fonte: WINE-SEARCHER. Rio Grande do Sul - Brazil Wine Region. 2023-10-23. Disponível em: https://www.wine-searcher.com/regions-rio+grande+do+sul. Acesso em: 27 mai. 2024.')
 
+st.write("### Buscar acordos com grandes países consumidores de vinho")
+st.write('Há uma grande janela de oportunidades a explorar. Dentre os dez países mais consumidores de vinho, de acordo com a International Organisation of Vine and Wine, dois deles - Argentina e Itália -, ocupam as posições 40 e 46, respectivamente, na quantidade de volume exportado.')
+with st.expander('Visualizar ranking de consumo segundo a International Organisation of Vine and Wine'):
+    st.image('imagens/ranking-de-consumo.png', caption='International Organisation of Vine and Wine - https://www.oiv.int/sites/default/files/2024-04/OIV_STATE_OF_THE_WORLD_VINE_AND_WINE_SECTOR_IN_2023.pdf', use_column_width='auto')
 
-# - Tragédia no RS
-# - Preço no mercosul é um limitador
+df_pais_peso = df_exp.groupby('País')['peso_l'].sum().reset_index()
+df_pais_peso = df_pais_peso.sort_values('peso_l', ascending=False).reset_index(drop=True)
+df_pais_peso['Posição'] = df_pais_peso.index + 1
+
+df_pais_peso.rename(columns={'peso_l': 'Volume importado'}, inplace=True)
+df_pais_peso['Volume importado'] = df_pais_peso['Volume importado'].apply(lambda x: f'{millify(x, precision=2)} litros')
+
+st.table(df_pais_peso.query('País in ["Italia", "Argentina"]').set_index('País'))
+
+
+# - Preço no mercosul é um limitador (NÃO ACHEI FONTES TAXATIVAS SOBRE TRAVA DE PREÇO)
 # - Ações de marketing/cooperação com países que importam mas pouco volume
+#     - França, Itália, Argentina, China e Portugal
 #     - Incluir a exportação de vinhos/espumantes na "Marca Brasil" do Ministério do turismo
 #     - APEX Brasil 
 # - Destacar China como grande potencial de crescimento
