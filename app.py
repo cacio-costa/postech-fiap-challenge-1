@@ -91,14 +91,15 @@ st.write('Além disso, o estudo apresentado pela OIV em 2023 revela que o Brasil
 with st.expander('Visualizar ranking de área de cultivo de vinho segundo a International Organisation of Vine and Wine'):
     st.image('imagens/ranking-de-area.png', caption='International Organisation of Vine and Wine - https://www.oiv.int/sites/default/files/2024-04/OIV_STATE_OF_THE_WORLD_VINE_AND_WINE_SECTOR_IN_2023.pdf', use_column_width='auto')
 
-st.write('Com essas informações iniciais sobre produção e exportação de vinhos e espumantes, já pode-se comparar essas duas áreas e perceber que o Brasil produz muito mais do que exporta. Isso significa que grande parte do consumo interno que demanda essa alta produção, e que o país ainda tem grandes janelas de oportunidade a explorar com parcerias comerciais. O gráfico abaixo dá a real dimensão da distância entre produção e exportação de vinhos e espumantes.')
+st.write('Considerando apenas o ano de 2023, a produção brasileira de vinhos e espumantes foi de cerca de 391 milhões de litros, ao passo que a exportação foi de 6 milhões de litros. A média de produção de vinhos e espumantes entre 2009 e 2023 foi de 328,95 milhões de litros, enquanto a média de exportação no mesmo período foi de 5,96 milhões de litros.')
+st.write('Com essas informações iniciais sobre produção e exportação de vinhos e espumantes, pode-se perceber que o Brasil produz muito mais do que exporta. Isso significa que grande parte da demanda por essa alta produção é de consumo interno e que o país ainda tem grandes janelas de oportunidade a explorar com parcerias comerciais internacionais. O gráfico abaixo dá a real dimensão da distância entre produção e exportação de vinhos e espumantes.')
 
 
 grafico = graficos.cria_grafico_producao_versus_exportacao(df_prod_vinho_pivot, df_exp_total_por_ano)
 st.pyplot(grafico)
 
 st.write("<br>", unsafe_allow_html=True)
-st.write('Nota-se também que no último ano a produção de vinho mundial teve uma queda de 9.6%, considerando vinhos e espumantes, enquanto que o Brasil apresentou um crescimento, indo na contramão do mundo em 2023, obtendo um crescimento de 12,6 p.p. em relação ao último período.')
+st.write('Nota-se também que no último ano a produção de vinho mundial teve uma queda de 9,6%, considerando vinhos e espumantes, enquanto que o Brasil apresentou um crescimento, indo na contramão do mundo em 2023, obtendo um crescimento de 12,6 p.p. em relação ao último período.')
 st.write('Grande parte da baixa mundial de produção se deu pelas condições climáticas e econômicas apresentadas no último ano - o que desencadeia não apenas em dificuldades, mas também em oportunidades, frente à concorrência com os demais players.')
 
 
@@ -162,7 +163,7 @@ st.pyplot(grafico)
 
 
 st.write("### Haiti")
-st.write('É surpreendente notar que o Haiti se destaca como o oitavo país que mais importa produtos brasileiros em termos de valor. Esse crescimento constante ao longo dos anos sugere que o Haiti está se tornando um parceiro cada vez mais importante para o Brasil, e é crucial compreender o máximo do potencial desse relacionamento bilateral. Um aspecto notável é o crescimento exponencial das exportações brasileiras para o Haiti de 2019 a 2021. Nesse período, o volume de exportações de vinho e espumante do Brasil aumentou de 0.1 megalitros para 0.6 megalitros por ano, representando um aumento impressionante de 600% em apenas dois anos. Embora tenha havido uma pequena queda em 2022, o cenário continua promissor para esse país.')
+st.write('É surpreendente notar que o Haiti se destaca como o oitavo país que mais importa produtos brasileiros em termos de valor. Esse crescimento constante ao longo dos anos sugere que o Haiti está se tornando um parceiro cada vez mais importante para o Brasil, e é crucial compreender o máximo do potencial desse relacionamento bilateral. Um aspecto notável é o crescimento exponencial das exportações brasileiras para o Haiti de 2019 a 2021. Nesse período, o volume de exportações de vinho e espumante do Brasil aumentou de 0,1 megalitros para 0,6 megalitros por ano, representando um aumento impressionante de 600% em apenas dois anos. Embora tenha havido uma pequena queda em 2022, o cenário continua promissor para esse país.')
 st.write('Além disso, apesar da diminuição no volume de litros exportados em 2023, o Brasil registrou seu maior valor arrecadado nesse mesmo ano, o que indica uma valorização crescente por parte dos consumidores haitianos em relação aos vinhos e espumantes brasileiros. Outro fator relevante é a presença brasileira nas missões de paz no Haiti. Como o Brasil é um aliado importante nessas operações, isso estabelece uma conexão adicional entre os dois países. Além de contribuir para a estabilidade e segurança no Haiti, os soldados brasileiros possivelmente propagam a cultura brasileira na região, o que pode influenciar positivamente as preferências de consumo e abrir portas para mais oportunidades comerciais. Assim, o Haiti não apenas se destaca como um parceiro comercial em ascensão, mas também como um importante ponto de conexão estratégica no Caribe para as mercadorias brasileiras.')
 
 grafico = graficos.cria_grafico_de_previsao_com_haiti(df_exp, df_exp_total_por_ano)
@@ -177,7 +178,10 @@ grafico = graficos.cria_grafico_de_previsao_com_eua(df_exp, df_exp_total_por_ano
 st.pyplot(grafico)
 
 
-st.write("## Recomendações e considerações finais")
+st.write("## Considerações finais")
+st.write("### Tragédia no Rio Grande do Sul")
+st.write('A tragédia ocorrida em 2024 no Rio Grande do Sul (recente à data de escrita deste relatório, maio de 2024) pode comprometer bastante a exportação de vinhos e espumantes. O Rio Grande do Sul desempenha um papel crucial na indústria vitivinícola do Brasil, sendo responsável por cerca de 90% da produção nacional de vinhos. A região é conhecida por suas uvas Vitis vinifera e Vitis labrusca, com uma produção diversificada que inclui vinhos tintos leves, vinhos brancos ricos e espumantes no estilo spumante italiano. A região de Serra Gaúcha, em particular, é notável pela produção de espumantes, que são um dos principais produtos da área.')
+st.caption('Fonte: WINE-SEARCHER. Rio Grande do Sul - Brazil Wine Region. 2023-10-23. Disponível em: https://www.wine-searcher.com/regions-rio+grande+do+sul. Acesso em: 27 mai. 2024.')
 
 
 # - Tragédia no RS
