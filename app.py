@@ -125,8 +125,9 @@ st.pyplot(grafico)
 
 grafico = graficos.cria_grafico_top_10_paises_consumidores(top_peso_kg)
 st.pyplot(grafico)
+st.divider()
 
-st.write("### Futuro otimista - tendência de crescimento em volume e valor")
+st.write("## Futuro otimista - tendência de crescimento em volume e valor")
 st.write('Além dos fatores mencionados, é importante destacar o cenário significativo em que o vinho/espumante brasileiro está se tornando uma commodity mais cara para o mercado global. Mesmo assim, continuamos exportando uma quantidade significativa desses produtos. O gráfico abaixo ilustra essa tendência, mostrando como o valor em dólares por litro está aumentando e prevê continuar crescendo nos próximos três anos, alcançando o melhor patamar da história.')
 
 anos_previsao = np.arange(2024, 2026+1)
@@ -150,6 +151,7 @@ st.pyplot(grafico)
 
 grafico = graficos.cria_grafico_de_valores_anuais_de_exportacao(df_exp_total_por_ano)
 st.pyplot(grafico, use_container_width=True)
+st.divider()
 
 ####### Análise dos países #######
 st.write("## Principais parceiros e oportunidades de colaboração")
@@ -177,7 +179,7 @@ st.write('Embora tenha havido uma queda no cenário econômico em 2023, os próx
 
 grafico = graficos.cria_grafico_de_previsao_com_eua(df_exp, df_exp_total_por_ano)
 st.pyplot(grafico)
-
+st.divider()
 
 st.write("## Considerações finais")
 st.write("### Tragédia no Rio Grande do Sul")
@@ -189,7 +191,7 @@ st.write('Há uma grande janela de oportunidades a explorar. Dentre os dez país
 with st.expander('Visualizar ranking de consumo segundo a International Organisation of Vine and Wine'):
     st.image('imagens/ranking-de-consumo.png', caption='International Organisation of Vine and Wine - https://www.oiv.int/sites/default/files/2024-04/OIV_STATE_OF_THE_WORLD_VINE_AND_WINE_SECTOR_IN_2023.pdf', use_column_width='auto')
 
-df_pais_peso = df_exp.groupby('País')['peso_l'].sum().reset_index()
+df_pais_peso = df_tem_exportacao.groupby('País')['peso_l'].sum().reset_index()
 df_pais_peso = df_pais_peso.sort_values('peso_l', ascending=False).reset_index(drop=True)
 df_pais_peso['Posição'] = df_pais_peso.index + 1
 
@@ -203,105 +205,76 @@ st.write('### Intensificar "Marca Brasil" e _Setorial Wines Of Brazil_')
 st.write('O mercado de exportação de vinhos já faz parte da "Marca Brasil" (é uma _Nation Brand_, do Ministério do Turismo, que representa o país no comércio de produtos, serviços e turismo), e também faz parte do projeto _Projeto Setorial Wines Of Brazil_, da APEX Brasil.')
 st.write('A APEX Brasil atende hoje 24 vinícolas brasileiras, das quais 16 já atuam no mercado internacional. Portanto, *nossa organização poderia negociar com a APEX Brasil para se juntar ao rol de vinícolas pertecentes ao projeto*, e assim ganhar mais visibilidade e novos mercados.')
 st.caption('APEXBRASIL. Vinhos e espumantes brasileiros batem recorde de exportações e conquistam cada vez mais consumidores ao redor do mundo com apoio da ApexBrasil. 2024-05-14. Disponível em: https://apexbrasil.com.br/br/pt/conteudo/noticias/vinhos-espumantes-batem-recorde-exportacoes.html. Acesso em: 27 maio 2024.')
-
-
-st.write('')
-
-# - Destacar China como grande potencial de crescimento
-
+st.divider()
 
 ################################## FIM DO RELATÓRIO #####################################
 
+st.write("## _Datasets_, indicadores e análises exploratórias")
 
+st.write("### Dados originais de vinhos e espumantes (unificado)")
 
-# st.write('### Dashboard: indicadores e exploração')
-# st.write('## Tratamento de transformação dos datasets de exportação de vinhos e espumantes')
+qtd_registros = df_exp['País'].count()
+qtd_registros_zerados = df_exp.query('valor_usd == 0 & peso_l == 0').shape[0]
+percentual_registros_ausentes = (qtd_registros_zerados / qtd_registros) * 100
 
-# st.write('#### Dataset bruto utilizado para análise')
-# st.write('Como podemos observar na amostra abaixo, o dataset não é intuitivo. As colunas dos anos sem sufixo indicam o peso exportado. E as colunas com sufixo ".1" indicam o valor vendido.')
-# st.write('Além disso, só temos dados consistentes a partir de 2009.')
+col_registros1, col_registros2, col_registros3 = st.columns(3)
+col_registros1.metric('Total de registros', qtd_registros)
+col_registros2.metric('Registros sem informação (zerados)', qtd_registros_zerados)
+col_registros3.metric('Percentual ausente', f'{millify(percentual_registros_ausentes, precision=2)}%')
 
+qtd_paises = len(df_exp['País'].unique())
+qtd_paises_sem_medidas = df_paises_sem_importacao.shape[0]
+percentual_paises_ausentes = (qtd_paises_sem_medidas / qtd_paises) * 100
 
-# st.write(df_exp_vinho.head())
+col_paises1, col_paises2, col_paises3 = st.columns(3)
+col_paises1.metric('Quantidade de países', qtd_paises)
+col_paises2.metric('Países sem importação', qtd_paises_sem_medidas)
+col_paises3.metric('Percentual sem importação', f'{millify(percentual_paises_ausentes, precision=2)}%')
 
-# st.write('Portanto foi necessário excluir os anos de 1970 a 2008. E o dataset foi transformado para facilitar as análises e obtenção de insights. Para isso, foram criadas as colunas **peso_kg** e **valor_usd**')
+st.caption('Dataframe original')
+st.dataframe(df_exp, hide_index=True)
+st.divider()
 
+dados = df_tem_exportacao
+if 'paises' in st.session_state and bool(st.session_state.paises):
+    dados = dados.query('País in @st.session_state.paises')
 
+st.write("### Exploração de dados de importação (somente registros de importação)")
+st.write('<br>', unsafe_allow_html=True)
 
-# st.write('#### Dataset de exportação de vinhos transformado')
-# st.write(df_exp_vinho_pivot)
+st.write('##### Volume exportado (em litros)')
 
+col_peso1, col_peso2, col_peso3 = st.columns(3)
+col_peso1.metric('Total', millify(dados['peso_l'].sum(), precision=2))
+col_peso2.metric('Média', millify(dados['peso_l'].mean(), precision=2))
+col_peso3.metric('Mediana', millify(dados['peso_l'].median(), precision=2))
+st.write('<br>', unsafe_allow_html=True)
 
-# # buffer = io.StringIO()
-# # df.info(buf=buffer)
-# # st.text(buffer.getvalue())
+st.write('##### Valor exportado (em dólares)')
 
-# st.write('#### Dataset de exportação de espumantes')
-# st.write('O dataset de exportação de espumantes original precisou dos mesmos tratamentos de dados do dataset de vinhos.')
+col_peso1, col_peso2, col_peso3 = st.columns(3)
+col_peso1.metric('Total', f"$ {millify(dados['valor_usd'].sum(), precision=2)}")
+col_peso2.metric('Média', f"$ {millify(dados['valor_usd'].mean(), precision=2)}")
+col_peso3.metric('Mediana', f"$ {millify(dados['valor_usd'].median(), precision=2)}")
 
+paises = st.multiselect("Filtrar por país:", list(df_tem_exportacao['País'].unique()), key='paises', placeholder='Escolha um ou mais países')
 
-# st.write(df_exp_espumante_pivot)
-
-
-
-
-# ## Merge dos datasets
-# st.write('## União dos datasets de vinhos e espumantes')
-# st.write('''A última transformação antes das análises consistiu em mesclar os dois datasets. As colunas de peso e valor de cada categoria foram especificadas (*peso_l_vinho, valor_usd_vinho, peso_l_espumante, valor_usd_espumante*), e duas novas colunas com o total dessas informações foram criadas: **peso_l** e **valor_usd**.''')
-
-
-# st.write(df_exp)
-
-# st.divider()
-
-# ### Análises exploratórias
-# st.write('## Análises exploratórias dos dados')
-# st.write('#### Informações presentes e ausentes')
-
-# qtd_registros = df_exp['País'].count()
-# qtd_registros_zerados = df_exp.query('valor_usd == 0 & peso_l == 0').shape[0]
-# percentual_registros_ausentes = (qtd_registros_zerados / qtd_registros) * 100
-
-# col_registros1, col_registros2, col_registros3 = st.columns(3)
-# col_registros1.metric('Total de registros', qtd_registros)
-# col_registros2.metric('Registros sem informação (zerados)', qtd_registros_zerados)
-# col_registros3.metric('Percentual ausente', f'{millify(percentual_registros_ausentes, precision=2)}%')
-
-
-
-# st.write(df_paises_sem_importacao)
-
-# qtd_paises = len(df_exp['País'].unique())
-# qtd_paises_sem_medidas = df_paises_sem_importacao.shape[0]
-# percentual_paises_ausentes = (qtd_paises_sem_medidas / qtd_paises) * 100
-
-# col_paises1, col_paises2, col_paises3 = st.columns(3)
-# col_paises1.metric('Quantidade de países', qtd_paises)
-# col_paises2.metric('Países sem importação', qtd_paises_sem_medidas)
-# col_paises3.metric('Percentual sem importação', f'{millify(percentual_paises_ausentes, precision=2)}%')
-
-# st.write('#### Países que importaram em algum momento')
-
-
-
-# st.metric('Anos sem importar', df_paises_com_importacao.query('valor_usd == 0 & peso_l == 0').shape[0])
-# st.caption('Mesmo entre os países que importaram do Brasil em algum momento, o número de anos sem importação é grande, representando **57,43%**.')
-
-# st.info('Muitos registros ausentes. Então, a partir daqui, esses registros foram desconsiderados.')
-
-# df_exp_presentes = df_exp.query('not (peso_l == 0 & valor_usd == 0)')
-# st.write(df_exp.describe())
-
-
-
-# st.write('#### Indicadores sobre o valor vendido')
-
-# col_peso1, col_peso2, col_peso3 = st.columns(3)
-# col_peso1.metric('Média de peso exportado', millify(df_exp_presentes['peso_l'].mean(), precision=2))
-# col_peso2.metric('Mediana de peso exportado', millify(df_exp_presentes['peso_l'].median(), precision=2))
-
-
-
-
-# st.write(df_exp_presentes[['peso_l', 'valor_usd']].describe(percentiles=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]))
-# st.write(df_exp_presentes.query('peso_l > 2502632.98'))
+mapeamento_colunas = {
+    'ano': 'Ano',
+    'peso_l': 'Litros totais',
+    'valor_usd': 'Valor total',
+    'peso_l_vinho': 'Litros de vinho',
+    'valor_usd_vinho': 'Valor pago (vinho)',
+    'peso_l_espumante': 'Litros de espumante',
+    'valor_usd_espumante': 'Valor pago (espumante)',
+    'usd_por_l': 'Valor por litro'
+}
+dados.rename(columns=mapeamento_colunas, inplace=True)
+dados.drop(columns=['peso_Ml', 'valor_usd_M'], inplace=True)
+st.dataframe(
+    dados.style.format(lambda x: millify(x, 2), subset=['Litros totais', 'Valor total', 'Litros de vinho', 'Valor pago (vinho)', 'Litros de espumante', 'Valor pago (espumante)', 'Valor por litro']), 
+    hide_index=True,
+    column_config={
+        'Ano': st.column_config.NumberColumn(format='%d')
+    }
+)
